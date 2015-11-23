@@ -9,8 +9,13 @@
     canvas.attr("width", width);
     canvas.attr("height", height);
 
+    // Center the root container
     root.x = width/2;
     root.y = height/2;
+
+    // Scale the root container according to height
+    scaleRatio = height/768;
+    root.scaleX = root.scaleY = scaleRatio;
   };
 
   var init = function() {
