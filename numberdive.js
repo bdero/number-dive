@@ -13,7 +13,7 @@
 
     var that = this;
     _.times(rings, function(n) {
-      that.addChild(new Ring(n*4 + 5, n*100));
+      that.addChild(new Ring(n*4 + 5, Math.pow(n*100, 1.01)));
     });
   };
 
@@ -28,14 +28,22 @@
       var angle = 2*Math.PI*n/stars;
       var x = Math.cos(angle)*radius;
       var y = Math.sin(angle)*radius;
-      that.addChild(new Star(x, y, 50, 0));
+      that.addChild(new Star(x, y, 30 + radius/100, 0));
     });
 
     this.rotationSpeed = Math.random()*4 - 2;
+    this.limit = 1 - radius/1000;
 
     createjs.Ticker.addEventListener("tick", function(event) {
       if (!event.paused) {
         that.rotation += that.rotationSpeed;
+        that.rotationSpeed = Math.max(
+          -that.limit,
+          Math.min(
+            that.limit,
+            that.rotationSpeed + (Math.random() - 0.5)/50
+          )
+        );
       }
     });
   };
@@ -57,7 +65,7 @@
     root.y = height/2;
 
     // Scale the root container according to height
-    scaleRatio = height/768;
+    scaleRatio = (height/768 + width/1024)/2;
     root.scaleX = root.scaleY = scaleRatio;
   };
 
@@ -76,7 +84,10 @@
     // Add handler for stage resizing
     $(window).resize(resetStageSize);
     resetStageSize();
-    root.addChild(new Star(0, 0, 50, 10));
+
+    var star = new Star(0, 0, 40, 20);
+    star.scaleX = star.scaleY = 0.4;
+    root.addChild(star);
   };
 
   // Initialize
