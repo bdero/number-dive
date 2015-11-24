@@ -1,5 +1,16 @@
 (function() {
 
+  var Star = function() {
+    createjs.Shape.call(this);
+
+    this.graphics
+      .beginFill("white")
+      .drawCircle(0, 0, 50);
+  }
+
+  Star.prototype = new createjs.Shape();
+
+
   var root;
 
   var resetStageSize = function() {
@@ -34,11 +45,7 @@
     $(window).resize(resetStageSize);
     resetStageSize();
 
-    var shape = new createjs.Shape();
-    shape.graphics
-      .beginFill("lightblue")
-      .drawCircle(0, 0, 50);
-    root.addChild(shape);
+    root.addChild(new Star());
   };
 
   // Initialize
