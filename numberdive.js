@@ -5,11 +5,11 @@
     this.x = x;
     this.y = y;
 
-    var circle = new createjs.Shape();
-    circle.graphics
+    this.center = new createjs.Shape();
+    this.center.graphics
       .beginFill("white")
       .drawCircle(0, 0, radius);
-      this.addChild(circle);
+      this.addChild(this.center);
 
     var that = this;
     _.times(rings, function(n) {
@@ -36,8 +36,7 @@
 
     createjs.Ticker.addEventListener("tick", function(event) {
       if (!event.paused) {
-        window.e = event;
-        that.rotation += that.rotationSpeed/20*event.delta;
+        // Set rotation
         that.rotationSpeed = Math.max(
           -that.limit,
           Math.min(
@@ -45,6 +44,7 @@
             that.rotationSpeed + (Math.random() - 0.5)/50
           )
         );
+        that.rotation += that.rotationSpeed/20*event.delta;
       }
     });
   };
@@ -53,6 +53,7 @@
 
 
   var root;
+  var stage;
 
   var resetStageSize = function() {
     var canvas = $("#cjs-canvas");
@@ -72,7 +73,7 @@
 
   var init = function() {
     // Initialize the stage
-    var stage = new createjs.Stage("cjs-canvas");
+    stage = new createjs.Stage("cjs-canvas");
 
     // Create update event loop
     createjs.Ticker.setFPS(60);
@@ -89,6 +90,11 @@
     var star = new Star(0, 0, 40, 20);
     star.scaleX = star.scaleY = 0.4;
     root.addChild(star);
+
+    stage.on("stagemousemove", function(event) {
+      star.center.x = (event.stageX - root.x)*star.scaleX;
+      star.center.y = (event.stageY - root.y)*star.scaleY;
+    });
   };
 
   // Initialize
