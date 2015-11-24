@@ -1,5 +1,9 @@
 (function() {
 
+  var asymptote = function(dist, divisor, dt) {
+    return (1 - 1/(dt/divisor + 1))*dist;
+  };
+
   var Star = function(x, y, radius, rings) {
     createjs.Container.call(this);
     this.x = x;
@@ -45,6 +49,18 @@
           )
         );
         that.rotation += that.rotationSpeed/20*event.delta;
+
+        // Follow center
+        that.x += asymptote(
+          that.parent.center.x - that.x,
+          radius/5,
+          event.delta
+        );
+        that.y += asymptote(
+          that.parent.center.y - that.y,
+          radius/5,
+          event.delta
+        );
       }
     });
   };
@@ -92,8 +108,8 @@
     root.addChild(star);
 
     stage.on("stagemousemove", function(event) {
-      star.center.x = (event.stageX - root.x)*star.scaleX;
-      star.center.y = (event.stageY - root.y)*star.scaleY;
+      star.center.x = (event.stageX - root.x)*star.scaleX*2;
+      star.center.y = (event.stageY - root.y)*star.scaleY*2;
     });
   };
 
