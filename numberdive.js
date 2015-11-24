@@ -1,14 +1,38 @@
 (function() {
 
-  var Star = function() {
-    createjs.Shape.call(this);
+  var Star = function(x, y, radius, rings) {
+    createjs.Container.call(this);
+    this.x = x;
+    this.y = y;
 
-    this.graphics
+    var circle = new createjs.Shape();
+    circle.graphics
       .beginFill("white")
-      .drawCircle(0, 0, 50);
-  }
+      .drawCircle(0, 0, radius);
+      this.addChild(circle);
 
-  Star.prototype = new createjs.Shape();
+    var that = this;
+    _.times(rings, function(n) {
+      that.addChild(new Ring(n*4 + 5, n*100));
+    });
+  };
+
+  Star.prototype = new createjs.Container();
+
+
+  var Ring = function(stars, radius) {
+    createjs.Container.call(this);
+
+    var that = this;
+    _.times(stars, function(n) {
+      var angle = 2*Math.PI*n/stars;
+      var x = Math.cos(angle)*radius;
+      var y = Math.sin(angle)*radius;
+      that.addChild(new Star(x, y, 50, 0));
+    });
+  };
+
+  Ring.prototype = new createjs.Container();
 
 
   var root;
@@ -44,8 +68,7 @@
     // Add handler for stage resizing
     $(window).resize(resetStageSize);
     resetStageSize();
-
-    root.addChild(new Star());
+    root.addChild(new Star(0, 0, 50, 10));
   };
 
   // Initialize
