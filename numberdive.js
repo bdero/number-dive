@@ -13,7 +13,7 @@
 
     var that = this;
     _.times(rings, function(n) {
-      that.addChild(new Ring(n*4 + 5, Math.pow(n*100, 1.01)));
+      that.addChild(new Ring(n*4 + 5, Math.pow(n*30, 1.2)));
     });
   };
 
@@ -36,7 +36,8 @@
 
     createjs.Ticker.addEventListener("tick", function(event) {
       if (!event.paused) {
-        that.rotation += that.rotationSpeed;
+        window.e = event;
+        that.rotation += that.rotationSpeed/20*event.delta;
         that.rotationSpeed = Math.max(
           -that.limit,
           Math.min(
