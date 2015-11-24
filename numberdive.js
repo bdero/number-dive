@@ -30,6 +30,14 @@
       var y = Math.sin(angle)*radius;
       that.addChild(new Star(x, y, 50, 0));
     });
+
+    this.rotationSpeed = Math.random()*4 - 2;
+
+    createjs.Ticker.addEventListener("tick", function(event) {
+      if (!event.paused) {
+        that.rotation += that.rotationSpeed;
+      }
+    });
   };
 
   Ring.prototype = new createjs.Container();
