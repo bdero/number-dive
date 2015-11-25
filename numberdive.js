@@ -18,6 +18,10 @@
     var that = this;
 
     this.center = new createjs.Shape();
+    if (visible) {
+      this.center.scaleX = Math.random()/2 + 0.5;
+      this.center.scaleY = Math.random()/2 + 0.5;
+    }
     this.addChild(this.center);
 
     this.color = "white";
@@ -170,12 +174,12 @@
     collideStars.push(mouseStar);
 
     createjs.Ticker.addEventListener("tick", function(event) {
-      mouseStar.x = asymptote(
+      mouseStar.x += asymptote(
         (mouseState.x - root.x)/root.scaleX - mouseStar.x,
         100,
         event.delta
       );
-      mouseStar.y = asymptote(
+      mouseStar.y += asymptote(
         (mouseState.y - root.y)/root.scaleY - mouseStar.y,
         100,
         event.delta
