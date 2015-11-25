@@ -55,7 +55,7 @@
     var ct = this.center.localToGlobal(0, 0);
     var co = other.center.localToGlobal(0, 0);
     return (
-      Math.pow(this.radius + other.radius, 2) >
+      Math.pow((this.radius*rootStar.scaleX + other.radius)*root.scaleX, 2) >
         Math.pow(co.x - ct.x, 2) + Math.pow(co.y - ct.y, 2)
     );
   };
@@ -107,6 +107,7 @@
 
   var root;
   var stage;
+  var rootStar;
 
   var collideStars = [new Star(100, 100, 100, 0, false)];
 
@@ -123,7 +124,7 @@
     root.y = height/2;
 
     // Scale the root container according to height
-    scaleRatio = (height/768 + width/1024)/2;
+    var scaleRatio = (height/768 + width/1024)/2;
     root.scaleX = root.scaleY = scaleRatio;
   };
 
@@ -143,13 +144,13 @@
     $(window).resize(resetStageSize);
     resetStageSize();
 
-    var star = new Star(0, 0, 40, 20);
-    star.scaleX = star.scaleY = 0.4;
-    root.addChild(star);
+    rootStar = new Star(0, 0, 40, 20);
+    rootStar.scaleX = rootStar.scaleY = 0.4;
+    root.addChild(rootStar);
 
     stage.on("stagemousemove", function(event) {
-      star.center.x = (event.stageX - root.x)*star.scaleX*2;
-      star.center.y = (event.stageY - root.y)*star.scaleY*2;
+      rootStar.center.x = (event.stageX - root.x)*rootStar.scaleX*2;
+      rootStar.center.y = (event.stageY - root.y)*rootStar.scaleY*2;
     });
   };
 
