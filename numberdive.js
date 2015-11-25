@@ -109,7 +109,10 @@
   var stage;
   var rootStar;
 
-  var collideStars = [new Star(100, 100, 100, 0, false)];
+  var mouseStar;
+  var collideStars = [];
+
+  var mouseState;
 
 
   var resetStageSize = function() {
@@ -136,6 +139,13 @@
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
 
+    // Set an initial mouse state
+    var initialMouseAngle = Math.random()*Math.PI*2;
+    mouseState = {
+      x: Math.cos(initialMouseAngle)*1000,
+      y: Math.sin(initialMouseAngle)*1000
+    };
+
     // Create the root container of the scene graph
     root = new createjs.Container();
     stage.addChild(root);
@@ -149,8 +159,27 @@
     root.addChild(rootStar);
 
     stage.on("stagemousemove", function(event) {
+      mouseState.x = event.stageX;
+      mouseState.y = event.stageY;
       rootStar.center.x = (event.stageX - root.x)*rootStar.scaleX*2;
       rootStar.center.y = (event.stageY - root.y)*rootStar.scaleY*2;
+    });
+
+    mouseStar = new Star(-500, -500, 100, 0, false);
+    root.addChild(mouseStar);
+    collideStars.push(mouseStar);
+
+    createjs.Ticker.addEventListener("tick", function(event) {
+      mouseStar.x = asymptote(
+        (mouseState.x - root.x)/root.scaleX - mouseStar.x,
+        100,
+        event.delta
+      );
+      mouseStar.y = asymptote(
+        (mouseState.y - root.y)/root.scaleY - mouseStar.y,
+        100,
+        event.delta
+      );
     });
   };
 
