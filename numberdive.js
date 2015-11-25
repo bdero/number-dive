@@ -4,16 +4,22 @@
     return (1 - 1/(dt/divisor + 1))*dist;
   };
 
-  var Star = function(x, y, radius, rings) {
+  var Star = function(x, y, radius, rings, drawCenter) {
     createjs.Container.call(this);
     this.x = x;
     this.y = y;
 
+    if (arguments.length < 5) {
+      drawCenter = true;
+    }
+
     this.center = new createjs.Shape();
-    this.center.graphics
-      .beginFill("white")
-      .drawCircle(0, 0, radius);
-      this.addChild(this.center);
+    if (drawCenter) {
+      this.center.graphics
+        .beginFill("white")
+        .drawCircle(0, 0, radius);
+        this.addChild(this.center);
+    }
 
     var that = this;
     _.times(rings, function(n) {
