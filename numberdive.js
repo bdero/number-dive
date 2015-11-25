@@ -165,8 +165,8 @@
     stage.on("stagemousemove", function(event) {
       mouseState.x = event.stageX;
       mouseState.y = event.stageY;
-      rootStar.center.x = (event.stageX - root.x)*rootStar.scaleX*2;
-      rootStar.center.y = (event.stageY - root.y)*rootStar.scaleY*2;
+      rootStar.center.x = -(event.stageX - root.x)/root.scaleX*rootStar.scaleX*2;
+      rootStar.center.y = -(event.stageY - root.y)/root.scaleY*rootStar.scaleY*2;
     });
 
     mouseStar = new Star(-500, -500, 100, 0, false);
