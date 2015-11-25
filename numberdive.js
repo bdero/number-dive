@@ -4,26 +4,46 @@
     return (1 - 1/(dt/divisor + 1))*dist;
   };
 
-  collideStars = [];
 
-  var Star = function(x, y, radius, rings, drawCenter) {
+  var Star = function(x, y, radius, rings, visible) {
     createjs.Container.call(this);
     this.x = x;
     this.y = y;
+    this.radius = radius;
 
     if (arguments.length < 5) {
-      drawCenter = true;
-    }
-
-    this.center = new createjs.Shape();
-    if (drawCenter) {
-      this.center.graphics
-        .beginFill("white")
-        .drawCircle(0, 0, radius);
-        this.addChild(this.center);
+      visible = true;
     }
 
     var that = this;
+
+    this.center = new createjs.Shape();
+    this.addChild(this.center);
+
+    this.color = "white";
+    this.currentColor = null;
+
+    if (visible) {
+      createjs.Ticker.addEventListener("tick", function(event) {
+        var colliding = _.find(collideStars, function(c) {
+          return that.colliding(c);
+        });
+
+        var color = _.isUndefined(colliding) ? that.color : "red";
+
+        if (color !== that.currentColor) {
+          that.currentColor = color;
+
+          that.center.graphics.clear();
+          that.center.graphics
+            .beginFill(color)
+            .drawCircle(0, 0, that.radius);
+        }
+      });
+    } else {
+      this.visible = false;
+    }
+
     _.times(rings, function(n) {
       that.addChild(new Ring(n*4 + 5, Math.pow(n*30, 1.2)));
     });
@@ -35,8 +55,8 @@
     var ct = this.center.localToGlobal(0, 0);
     var co = other.center.localToGlobal(0, 0);
     return (
-      this.center.radius + other.center.radius <
-        Math.abs((co.x - ct.x) + (co.y - ct.y))
+      Math.pow(this.radius + other.radius, 2) >
+        Math.pow(co.x - ct.x, 2) + Math.pow(co.y - ct.y, 2)
     );
   };
 
@@ -87,6 +107,9 @@
 
   var root;
   var stage;
+
+  var collideStars = [new Star(100, 100, 100, 0, false)];
+
 
   var resetStageSize = function() {
     var canvas = $("#cjs-canvas");
