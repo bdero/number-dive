@@ -4,6 +4,8 @@
     return (1 - 1/(dt/divisor + 1))*dist;
   };
 
+  collideStars = [];
+
   var Star = function(x, y, radius, rings, drawCenter) {
     createjs.Container.call(this);
     this.x = x;
@@ -28,6 +30,15 @@
   };
 
   Star.prototype = new createjs.Container();
+
+  Star.prototype.colliding = function(other) {
+    var ct = this.center.localToGlobal(0, 0);
+    var co = other.center.localToGlobal(0, 0);
+    return (
+      this.center.radius + other.center.radius <
+        Math.abs((co.x - ct.x) + (co.y - ct.y))
+    );
+  };
 
 
   var Ring = function(stars, radius) {
