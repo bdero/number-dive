@@ -120,10 +120,17 @@
   var mouseEntered = false;
 
 
+  var getScaleRatio = function(width, height) {
+    return (height/768 + width/1024)/2;
+  };
+
   var resetStageSize = function() {
     var canvas = $("#cjs-canvas");
+
     var width = canvas.width();
     var height = canvas.height();
+    var previousWidth = canvas.attr("width");
+    var previousHeight = canvas.attr("height");
     canvas.attr("width", width);
     canvas.attr("height", height);
 
@@ -132,8 +139,22 @@
     root.y = height/2;
 
     // Scale the root container according to height
-    var scaleRatio = (height/768 + width/1024)/2;
+    var scaleRatio = getScaleRatio(width, height);
     root.scaleX = root.scaleY = scaleRatio;
+
+    // Calculate the ratio of the scale ratios and apply mouse adjustment
+    if (!_.isUndefined(previousWidth) && !_.isUndefined(previousHeight)) {
+      var previousScaleRatio = getScaleRatio(previousWidth, previousHeight);
+      var ratioRatio = scaleRatio/previousScaleRatio;
+
+      // Three operations here:
+      //   1. Subtract half previous width/height to set the origin to the center
+      //   2. Scale the coordinate by the ratio of scale ratios
+      //   3. Add half of the current width/height to return the origin
+      // This keeps the mouse position perfectly stable during window resizing
+      mouseState.x = (mouseState.x - previousWidth/2)*ratioRatio + width/2;
+      mouseState.y = (mouseState.y - previousHeight/2)*ratioRatio + height/2;
+    }
   };
 
   var init = function() {
