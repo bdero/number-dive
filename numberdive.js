@@ -117,6 +117,7 @@
   var collideStars = [];
 
   var mouseState;
+  var mouseEntered = false;
 
 
   var resetStageSize = function() {
@@ -143,13 +144,6 @@
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
 
-    // Set an initial mouse state
-    var initialMouseAngle = Math.random()*Math.PI*2;
-    mouseState = {
-      x: Math.cos(initialMouseAngle)*1000,
-      y: Math.sin(initialMouseAngle)*1000
-    };
-
     // Create the root container of the scene graph
     root = new createjs.Container();
     stage.addChild(root);
@@ -158,6 +152,13 @@
     $(window).resize(resetStageSize);
     resetStageSize();
 
+    // Set an initial mouse state
+    var initialMouseAngle = Math.random()*Math.PI*2;
+    mouseState = {
+      x: Math.cos(initialMouseAngle)*1000*root.scaleX,
+      y: Math.sin(initialMouseAngle)*1000*root.scaleY
+    };
+
     rootStar = new Star(0, 0, 40, 20);
     rootStar.scaleX = rootStar.scaleY = 0.4;
     root.addChild(rootStar);
@@ -165,11 +166,14 @@
     stage.on("stagemousemove", function(event) {
       mouseState.x = event.stageX;
       mouseState.y = event.stageY;
-      rootStar.center.x = -(event.stageX - root.x)/root.scaleX*rootStar.scaleX*2;
-      rootStar.center.y = -(event.stageY - root.y)/root.scaleY*rootStar.scaleY*2;
+      mouseEntered = true;
     });
 
-    mouseStar = new Star(-500, -500, 100, 0, false);
+    mouseStar = new Star(
+      mouseState.x/root.scaleX,
+      mouseState.y/root.scaleY,
+      100, 0, false
+    );
     root.addChild(mouseStar);
     collideStars.push(mouseStar);
 
@@ -184,6 +188,10 @@
         100,
         event.delta
       );
+      if (mouseEntered) {
+        rootStar.center.x = -mouseStar.x/rootStar.scaleX/2.5;
+        rootStar.center.y = -mouseStar.y/rootStar.scaleY/2.5;
+      }
     });
   };
 
