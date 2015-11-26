@@ -58,9 +58,14 @@
   Star.prototype.colliding = function(other) {
     var ct = this.center.localToGlobal(0, 0);
     var co = other.center.localToGlobal(0, 0);
+
+    var totalRadius = (this.radius*rootStar.scaleX + other.radius)*root.scaleX;
+    var xDistance = co.x - ct.x;
+    var yDistance = co.y - ct.y
+
     return (
-      Math.pow((this.radius*rootStar.scaleX + other.radius)*root.scaleX, 2) >
-        Math.pow(co.x - ct.x, 2) + Math.pow(co.y - ct.y, 2)
+      totalRadius*totalRadius >
+        xDistance*xDistance + yDistance*yDistance
     );
   };
 
