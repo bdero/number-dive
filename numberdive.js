@@ -70,8 +70,17 @@
   };
 
 
-  var Ring = function(stars, radius) {
+  var Ring = function(stars, radius, waveMagnitude, waveOffset) {
     createjs.Container.call(this);
+
+    if (arguments.length < 3) {
+      waveMagnitude = 0;
+    }
+    this.waveMagnitude = waveMagnitude;
+    if (arguments.length < 4) {
+      waveOffset = 0;
+    }
+    this.waveOffset = waveOffset;
 
     var that = this;
     _.times(stars, function(n) {
@@ -86,6 +95,12 @@
 
     createjs.Ticker.addEventListener("tick", function(event) {
       if (!event.paused) {
+        waveMagnitude =  1;
+        if (waveMagnitude !== 0) {
+          that.scaleX = that.scaleY = (
+            (Math.sin(event.time/30 + that.waveOffset) + 1)/2*that.waveMagnitude
+          );
+        }
         // Set rotation
         that.rotationSpeed = Math.max(
           -that.limit,
