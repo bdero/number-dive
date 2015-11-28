@@ -5,7 +5,7 @@
   };
 
 
-  var Star = function(x, y, radius, rings, visible) {
+  var Star = function(x, y, radius, rings, visible, waveMagnitude, waveOffset, waveMultiplier) {
     createjs.Container.call(this);
     this.x = x;
     this.y = y;
@@ -13,6 +13,15 @@
 
     if (arguments.length < 5) {
       visible = true;
+    }
+    if (arguments.length < 6) {
+      waveMagnitude = 0;
+    }
+    if (arguments.length < 7) {
+      waveOffset = 0.2;
+    }
+    if (arguments.length < 8) {
+      waveMultiplier = 1;
     }
 
     var that = this;
@@ -49,7 +58,9 @@
     }
 
     _.times(rings, function(n) {
-      that.addChild(new Ring(n*4 + 5, Math.pow(n*30, 1.2)));
+      that.addChild(
+        new Ring(n*4 + 5, Math.pow(n*30, 1.2), waveMagnitude, n*waveOffset, waveMultiplier)
+      );
     });
   };
 
@@ -70,8 +81,21 @@
   };
 
 
-  var Ring = function(stars, radius) {
+  var Ring = function(stars, radius, waveMagnitude, waveOffset, waveMultiplier) {
     createjs.Container.call(this);
+
+    if (arguments.length < 3) {
+      waveMagnitude = 0;
+    }
+    this.waveMagnitude = waveMagnitude;
+    if (arguments.length < 4) {
+      waveOffset = 0;
+    }
+    this.waveOffset = waveOffset;
+    if (arguments.length < 5) {
+      waveMultiplier = 1;
+    }
+    this.waveMultiplier = waveMultiplier;
 
     var that = this;
     _.times(stars, function(n) {
@@ -86,6 +110,12 @@
 
     createjs.Ticker.addEventListener("tick", function(event) {
       if (!event.paused) {
+        if (that.waveMagnitude !== 0) {
+          var scale = Math.sin(
+            event.time/1000*that.waveMultiplier + that.waveOffset
+          )/2*that.waveMagnitude + 1;
+          that.scaleX = that.scaleY = scale;
+        }
         // Set rotation
         that.rotationSpeed = Math.max(
           -that.limit,
@@ -185,7 +215,7 @@
       y: Math.sin(initialMouseAngle)*1000*root.scaleY
     };
 
-    rootStar = new Star(0, 0, 40, 20);
+    rootStar = new Star(0, 0, 40, 20, true, 3, 0.4, 0.5);
     rootStar.scaleX = rootStar.scaleY = 0.4;
     root.addChild(rootStar);
 
