@@ -215,7 +215,7 @@
       y: Math.sin(initialMouseAngle)*1000*root.scaleY
     };
 
-    rootStar = new Star(0, 0, 40, 20, true, 3, 0.4, 0.5);
+    rootStar = new Star(0, 0, 40, 20, true, 0.4, 0.5, -5);
     rootStar.scaleX = rootStar.scaleY = 0.4;
     root.addChild(rootStar);
 
