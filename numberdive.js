@@ -5,23 +5,36 @@
   };
 
 
-  var Star = function(x, y, radius, rings, visible, waveMagnitude, waveOffset, waveMultiplier) {
+  var createColor = function(red, green, blue) {
+    return {r: red, g: green, b: blue};
+  };
+
+  var displayColor = function(color) {
+    return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+  }
+
+
+  var Star = function(x, y, radius, rings, color, visible, waveMagnitude, waveOffset, waveMultiplier) {
     createjs.Container.call(this);
     this.x = x;
     this.y = y;
     this.radius = radius;
 
     if (arguments.length < 5) {
+      color = createColor(255, 255, 255);
+    }
+    this.color = color;
+    if (arguments.length < 6) {
       visible = true;
     }
-    if (arguments.length < 6) {
-      waveMagnitude = 0;
-    }
     if (arguments.length < 7) {
-      waveOffset = 0.2;
+      waveMagnitude = 0.4;
     }
     if (arguments.length < 8) {
-      waveMultiplier = 1;
+      waveOffset = 0.5;
+    }
+    if (arguments.length < 9) {
+      waveMultiplier = -5;
     }
 
     var that = this;
@@ -33,7 +46,6 @@
     }
     this.addChild(this.center);
 
-    this.color = "white";
     this.currentColor = null;
 
     if (visible) {
@@ -42,14 +54,14 @@
           return that.colliding(c);
         });
 
-        var color = _.isUndefined(colliding) ? that.color : "red";
+        var newColor = _.isUndefined(colliding) ? that.color : Star.DEFAULT_COLOR;
 
-        if (color !== that.currentColor) {
-          that.currentColor = color;
+        if (newColor !== that.currentColor) {
+          that.currentColor = newColor;
 
           that.center.graphics.clear();
           that.center.graphics
-            .beginFill(color)
+            .beginFill(displayColor(newColor))
             .drawCircle(0, 0, that.radius);
         }
       });
@@ -65,6 +77,8 @@
   };
 
   Star.prototype = new createjs.Container();
+
+  Star.DEFAULT_COLOR = createColor(255, 0, 0);
 
   Star.prototype.colliding = function(other) {
     var ct = this.center.localToGlobal(0, 0);
@@ -215,7 +229,7 @@
       y: Math.sin(initialMouseAngle)*1000*root.scaleY
     };
 
-    rootStar = new Star(0, 0, 40, 20, true, 0.4, 0.5, -5);
+    rootStar = new Star(0, 0, 40, 20, createColor(255, 255, 255), true, 3, -0.5, 1);
     rootStar.scaleX = rootStar.scaleY = 0.4;
     root.addChild(rootStar);
 
@@ -228,7 +242,7 @@
     mouseStar = new Star(
       mouseState.x/root.scaleX,
       mouseState.y/root.scaleY,
-      100, 0, false
+      100, 0, null, false
     );
     root.addChild(mouseStar);
     collideStars.push(mouseStar);
