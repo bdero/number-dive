@@ -173,6 +173,22 @@
     return (height/768 + width/1024)/2;
   };
 
+  var initSound = function() {
+    var sounds = [
+      {src: "music/intro.ogg", id: "intro"}
+    ];
+
+    var loadHandler = function(event) {
+      if (event.id === "intro") {
+        var instance = createjs.Sound.play(event.id);
+        instance.volume = 0.8;
+      };
+    };
+
+    createjs.Sound.registerSounds(sounds, "");
+    createjs.Sound.on("fileload", loadHandler);
+  };
+
   var resetStageSize = function() {
     var canvas = $("#cjs-canvas");
 
@@ -209,6 +225,9 @@
   var init = function() {
     // Initialize the stage
     stage = new createjs.Stage("cjs-canvas");
+
+    // Load the sounds
+    initSound();
 
     // Create update event loop
     createjs.Ticker.setFPS(60);
