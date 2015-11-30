@@ -181,7 +181,13 @@
     var loadHandler = function(event) {
       if (event.id === "intro") {
         var instance = createjs.Sound.play(event.id);
-        instance.volume = 0.8;
+        instance.setVolume(0.4);
+
+        var finishedPlaying = function(event) {
+          instance.play();
+        };
+
+        instance.on("complete", finishedPlaying, null, false);
       };
     };
 
